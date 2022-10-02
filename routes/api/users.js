@@ -1,0 +1,32 @@
+const express = require('express');
+router = express.Router();
+const {check, validationResult } = require('express-validator/check'); 
+const Users = require('../../models/Users')
+// @route    Post api/users
+// @desc     User Registration
+// @access   Public
+router.post('/', [ 
+    check('name', 'Name is required').not().isEmpty(),
+    check('email', 'Please enter a valid email').isEmail(),
+    check('password', 'Please enter a password of minimum length 6').isLength({min: 6})
+], 
+async (req, res) => {
+    const errors = validationResult(req);
+    if(!errors.isEmpty()){
+        return res.status(400).json({ errors: errors.array()});
+    }
+    const {name, email, password} = req.body;
+    try{
+        let user = await Users.findOne({email});
+        if(user)
+        {
+            req.status(400).json({errors: [{msg: 'User already exists'}]});
+        }
+        res.send('User route');
+    }catch(err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+
+});
+module.exports= router;
