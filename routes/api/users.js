@@ -1,7 +1,7 @@
 const express = require('express');
 router = express.Router();
-const {check, validationResult } = require('express-validator/check'); 
-const Users = require('../../models/Users')
+const { check, validationResult } = require('express-validator/check'); 
+const User = require('../../models/User')
 // @route    Post api/users
 // @desc     User Registration
 // @access   Public
@@ -17,10 +17,10 @@ async (req, res) => {
     }
     const {name, email, password} = req.body;
     try{
-        let user = await Users.findOne({email});
-        if(user)
+        let user = await User.findOne({email});
+        if (user)
         {
-            req.status(400).json({errors: [{msg: 'User already exists'}]});
+            res.status(400).json({errors: [{msg: 'User already exists'}]});
         }
         res.send('User route');
     }catch(err) {
